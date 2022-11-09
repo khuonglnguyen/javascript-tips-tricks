@@ -1,26 +1,33 @@
-const initApp = () => {
-  const button = document.querySelector("button");
-  button.addEventListener("click", debounce(clickOrder, 2000));
-};
+class LRUCache {
+  constructor(size) {
+    this.size = size || 0;
+    this.cache = new Map();
+  }
 
-const clickOrder = () => {
-  console.log("Clicked!");
-};
-
-document.addEventListener("DOMContentLoaded", initApp);
-
-const debounce = (fn, delay) => {
-  delay = delay || 0;
-  let timerId;
-  console.log("timerId: ", timerId);
-  return () => {
-    if (timerId) {
-      clearTimeout(timerId);
-      timerId = null;
+  put(key, value) {
+    const hasKey = this.cache.has();
+    if (hasKey) {
+      this.cache.delete(key);
     }
+    this.cache.set(key, value);
+    if (this.cache.size > this.size) {
+      this.cache.delete(this.cache.keys().next().value);
+    }
+    return 1;
+  }
 
-    timerId = setTimeout(() => {
-      fn();
-    }, delay);
-  };
-};
+  get(key) {
+    const hasKey = this.cache.has();
+    if (hasKey) {
+      const val = this.cache.get(key);
+      this.cache.delete(key);
+      this.cache.set(key, val);
+      return val;
+    }
+    return -1;
+  }
+
+  items() {
+    return this.cache.entries();
+  }
+}
