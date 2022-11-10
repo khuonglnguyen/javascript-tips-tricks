@@ -1,26 +1,27 @@
-const initApp = () => {
-  const button = document.querySelector("button");
-  button.addEventListener("click", debounce(clickOrder, 2000));
+function request(type) {
+  return new Promise((reslove, reject) => {
+    setTimeout(() => {
+      type === "a" ? reslove("resolve") : reject("reject");
+    }, 2000);
+  });
+}
+
+async function getData() {
+  let err, result;
+  [err, result] = await handleRequest(request("a"));
+  if (err) {
+    console.error("Error: ", err);
+  }
+}
+
+const handleRequest = (promise) => {
+  return promise
+    .then((data) => {
+      [undefined, data];
+    })
+    .catch((err) => {
+      [err, undefined];
+    });
 };
 
-const clickOrder = () => {
-  console.log("Clicked!");
-};
-
-document.addEventListener("DOMContentLoaded", initApp);
-
-const debounce = (fn, delay) => {
-  delay = delay || 0;
-  let timerId;
-  console.log("timerId: ", timerId);
-  return () => {
-    if (timerId) {
-      clearTimeout(timerId);
-      timerId = null;
-    }
-
-    timerId = setTimeout(() => {
-      fn();
-    }, delay);
-  };
-};
+getData();
